@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { act, advance, clickValue, decodeSave, hireCost, multiplier, newGame, OFFLINE_LIMIT, rate, restoreGame, SAVE_KEY } from '../lib/game.ts';
+import { GOALS, ISLANDS, PRODUCTIONS, projectCost, act, advance, clickValue, decodeSave, hireCost, multiplier, newGame, OFFLINE_LIMIT, rate, restoreGame, SAVE_KEY } from '../lib/game.ts';
 
 await test('the first capybara works automatically; collection and hires spend the displayed price', () => {
   const initial = newGame(1000);
@@ -12,7 +12,7 @@ await test('the first capybara works automatically; collection and hires spend t
   assert.equal(funded.fruits, 20);
   const bought = act(funded, { type: 'hire', index: 0 });
   assert.equal(bought.fruits, 0);
-  assert.deepEqual(bought.units, [2, 0, 0]);
+  assert.deepEqual(bought.units, [2, 0, 0, 0, 0, 0]);
   assert.equal(act(bought, { type: 'hire', index: 0 }), bought);
   assert.equal(hireCost(bought, 0), 24);
   assert.equal(initial.fruits, 0);
@@ -23,7 +23,7 @@ await test('island gating, one-time upgrades and additive island bonuses remain 
   assert.equal(act(funded, { type: 'hire', index: 1 }), funded);
   assert.equal(act(funded, { type: 'upgrade', index: 1 }), funded);
   const island2 = act(funded, { type: 'expand' });
-  assert.equal(island2.fruits, 29750);
+  assert.equal(island2.fruits, 28500);
   assert.equal(multiplier(island2), 1.25);
   const garden = act(island2, { type: 'hire', index: 1 });
   assert.equal(rate(garden), 7.5);
@@ -91,8 +91,54 @@ await test('fractional timer intervals and upgrades do not change already-earned
 await test('malformed saves and invalid purchases cannot corrupt the game', () => {
   const valid = newGame(1000);
   assert.deepEqual(decodeSave(JSON.stringify(valid)), valid);
-  for (const raw of ['not json', 'null', '[]', '{"version":999}', JSON.stringify({ ...valid, fruits: -1 }), JSON.stringify({ ...valid, earned: Infinity }), JSON.stringify({ ...valid, units: [1.5, 0, 0] }), JSON.stringify({ ...valid, units: [1, 1, 0] }), JSON.stringify({ ...valid, island: 4 }), JSON.stringify({ ...valid, lastTick: 'bad' }), JSON.stringify({ ...valid, upgraded: [false, true, false] })]) assert.equal(decodeSave(raw), null);
-  for (const index of [-1, 3, 1.5, NaN]) assert.equal(act(valid, { type: 'hire', index }), valid);
+  for (const raw of ['not json', 'null', '[]', '{"version":999}', JSON.stringify({ ...valid, fruits: -1 }), JSON.stringify({ ...valid, earned: Infinity }), JSON.stringify({ ...valid, units: [1.5, 0, 0] }), JSON.stringify({ ...valid, units: [1, 1, 0] }), JSON.stringify({ ...valid, island: 7 }), JSON.stringify({ ...valid, lastTick: 'bad' }), JSON.stringify({ ...valid, upgraded: [false, true, false] })]) assert.equal(decodeSave(raw), null);
+  for (const index of [-1, 6, 1.5, NaN]) assert.equal(act(valid, { type: 'hire', index }), valid);
   const full = { ...valid, fruits: 1e30, earned: 1e30, units: [250, 0, 0] };
   assert.equal(act(full, { type: 'hire', index: 0 }), full);
+});
+
+await test('legacy saves keep balances, helpers and purchased upgrades', () => {
+  const legacy = { version: 1, fruits: 42, earned: 5000, units: [8, 2, 1], upgraded: [true, false, true], basket: true, island: 3, lastTick: 1000 };
+  const migrated = decodeSave(JSON.stringify(legacy));
+  assert.ok(migrated);
+  assert.equal(migrated.fruits, 42);
+  assert.deepEqual(migrated.units, [8, 2, 1, 0, 0, 0]);
+  assert.deepEqual(migrated.upgraded, [true, false, true, false, false, false]);
+  assert.equal(migrated.project, 0);
+  assert.deepEqual(decodeSave(JSON.stringify(migrated)), migrated);
+});
+await test('late islands require both savings and a developed community', () => {
+  let game = { ...newGame(0), island: 3, fruits: 1e9, earned: 1e9 };
+  assert.equal(act(game, { type: 'expand' }), game);
+  game = { ...game, units: [30, 20, 20, 0, 0, 0] };
+  for (let island = 4; island <= ISLANDS.length; island++) {
+    const before = game;
+    game = act(game, { type: 'expand' });
+    assert.equal(game.island, island);
+    assert.equal(before.fruits - game.fruits, ISLANDS[island - 1].cost);
+    game = act(game, { type: 'hire', index: island - 1 });
+    assert.equal(game.units[island - 1], 1);
+  }
+  assert.equal(act(game, { type: 'expand' }), game);
+  assert.equal(PRODUCTIONS.length, 6);
+});
+await test('objectives pay once and construction has escalating cost and a hard cap', () => {
+  const initial = newGame(0);
+  assert.equal(act(initial, { type: 'claim', index: 0 }), initial);
+  const achieved = { ...initial, units: [10, 0, 0, 0, 0, 0] };
+  const paid = act(achieved, { type: 'claim', index: 0 });
+  assert.equal(paid.fruits, GOALS[0].reward);
+  assert.equal(act(paid, { type: 'claim', index: 0 }), paid);
+  for (const index of [-1, 99, NaN, 0.5]) assert.equal(act(paid, { type: 'claim', index }), paid);
+  let game = { ...initial, fruits: 1e14, earned: 1e14 };
+  for (let level = 1; level <= 20; level++) {
+    const cost = projectCost(game); const balance = game.fruits;
+    game = act(game, { type: 'project' });
+    assert.equal(game.project, level);
+    assert.equal(game.fruits, balance - cost);
+    assert.ok(projectCost(game) > cost);
+  }
+  assert.equal(act(game, { type: 'project' }), game);
+  assert.equal(multiplier(game), 3);
+  for (const patch of [{project: 21}, {claimed: [0, 0]}, {claimed: [-1]}]) assert.equal(decodeSave(JSON.stringify({...game, ...patch})), null);
 });

@@ -136,3 +136,5 @@ footer { padding-bottom: calc(25px + env(safe-area-inset-bottom)); }
 @keyframes capy-breathe { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(1.5deg); } }
 @keyframes capy-blink { 0%, 42%, 46%, 100% { transform: scaleY(1); } 44% { transform: scaleY(.08); } }
 @media (prefers-reduced-motion: reduce) { .capy-body, .capy-eye { animation: none !important; }.motion-toggle { display: none; } }
+
+.goal-row { padding: 20px 0; border-bottom: 1px solid #dce6d9; }.goal-row h3 { font-size: 16px; }.goal-row p { font-size: 13px; margin: 7px 0 10px; color: #5e7469; }.goal-row button,.island-journal > button { margin-top: 14px; min-height: 44px; }.management-tabs-list [data-slot=tabs-trigger] { gap: 5px; padding-inline: 8px; }
