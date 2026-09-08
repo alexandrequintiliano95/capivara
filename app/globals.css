@@ -122,3 +122,17 @@ footer { padding-bottom: calc(25px + env(safe-area-inset-bottom)); }
 }
 @media (max-width: 380px) { .brand { font-size: 16px; gap: 6px; }.brand-icon { width: 32px; height: 32px; }.topbar { padding-inline: 12px; }main { padding-inline: 12px; }h1 { font-size: 21px; }.mobile-hud { padding-inline: 11px; gap: 7px; }.mobile-balance { gap: 6px; }.mobile-balance strong { font-size: 24px; }.mobile-residents > span { display: none; }.production-title h3 { font-size: 14px; }.production-icon { width: 43px; height: 46px; }.production-row { gap: 10px; }.villagers { grid-template-columns: 1fr 1fr; }.villager { align-items: flex-start; flex-direction: column; }.villager strong { font-size: 13px; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }*, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }.fruit-particles { display: none; } }
+
+.capy-layer { position: absolute; inset: 0; pointer-events: none; }
+.capy-sprite { position: absolute; width: 22%; overflow: visible; }
+.capy-0 { left: 15%; top: 49%; transform: rotate(-5deg); }
+.capy-1 { right: 8%; top: 60%; transform: scaleX(-1); }
+.capy-body { transform-origin: 70px 98px; animation: capy-breathe 4s ease-in-out infinite; }
+.capy-1 .capy-body { animation-delay: -1.7s; animation-duration: 5s; }
+.capy-eye { transform-box: fill-box; transform-origin: center; animation: capy-blink 5.8s infinite; }
+.capy-1 .capy-eye { animation-delay: -2s; }
+.capy-layer[data-moving=false] .capy-body, .capy-layer[data-moving=false] .capy-eye { animation-play-state: paused; }
+.motion-toggle { position: absolute; left: 12px; bottom: 12px; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #dbe4d6; border-radius: 50%; background: #fffdf4; color: #274b3f; pointer-events: auto; }
+@keyframes capy-breathe { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(1.5deg); } }
+@keyframes capy-blink { 0%, 42%, 46%, 100% { transform: scaleY(1); } 44% { transform: scaleY(.08); } }
+@media (prefers-reduced-motion: reduce) { .capy-body, .capy-eye { animation: none !important; }.motion-toggle { display: none; } }

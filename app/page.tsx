@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import PwaControls from './pwa-controls';
+import Capybaras from './capybaras';
 import { Apple, ArrowRight, ArrowUpRight, Check, ChefHat, CircleHelp, Heart, Leaf, LockKeyhole, Map, Plus, ShoppingBasket, Sparkles, Sprout, Sun, Trees, TrendingUp, Users, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -126,9 +127,9 @@ export default function Home() {
   return (
     <div className="game-shell">
       <header className="topbar">
-        <a href="#ilha" className="brand" aria-label="Ilha das Capivaras, ir para o jogo">
+        <a href="#ilha" className="brand" aria-label="Capivárias, ir para o jogo">
           <Image className="brand-icon" src="/icons/icon-192.png" alt="" width={42} height={42} unoptimized />
-          <span>ilha das <strong>capivaras</strong><span className="brand-dot">.</span></span>
+          <span><strong>capivárias</strong><span className="brand-dot">.</span></span>
         </a>
         <div className="topbar-right"><span className="slow-note"><Sun size={17} /> um dia de cada vez</span><PwaControls /><Button variant="ghost" className="help-button" onClick={() => setHelp(true)} aria-label="Como jogar"><CircleHelp size={21} /></Button></div>
       </header>
@@ -141,6 +142,7 @@ export default function Home() {
           <section className="island-column" aria-label="Sua ilha">
             <div className="island-scene">
               <Image className="island-art" src="/island.webp" alt="Uma pequena ilha tropical com pomar, casinha e capivaras cuidando da horta e descansando no lago." priority unoptimized width={1536} height={1024} />
+              <Capybaras />
               <div className="scene-heading"><span className="live-dot" /><span>{ISLANDS[game.island - 1].name}</span><span className="scene-weather"><Sun size={16} /> 26°</span></div>
               <div className="scene-label orchard"><Trees size={15} /> Pomar <span>{game.units[0]}</span></div>
               {game.island >= 2 && <div className="scene-label garden"><Sprout size={15} /> Horta <span>{game.units[1]}</span></div>}

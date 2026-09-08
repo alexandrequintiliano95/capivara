@@ -1,4 +1,4 @@
-# Ilha das Capivaras
+# Capivárias
 
 Jogo idle mobile/PWA: colha frutas, contrate capivaras, melhore a produção e expanda uma pequena ilha tropical. Interface em português, instalação na tela inicial e funcionamento offline depois do primeiro carregamento completo.
 

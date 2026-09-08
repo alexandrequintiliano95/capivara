@@ -4,10 +4,10 @@ import './globals.css';
 
 const nunito = Nunito({ variable: '--font-nunito', subsets: ['latin'], display: 'swap' });
 export const metadata: Metadata = {
-  title: 'Ilha das Capivaras',
+  title: 'Capivárias',
   description: 'Colha frutas, acolha capivaras e faça sua pequena ilha florescer. Um jogo idle para ir no seu ritmo.',
-  applicationName: 'Ilha das Capivaras',
-  appleWebApp: { capable: true, statusBarStyle: 'default', title: 'Capivaras' },
+  applicationName: 'Capivárias',
+  appleWebApp: { capable: true, statusBarStyle: 'default', title: 'Capivárias' },
   icons: { icon: [{ url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }] },
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#f5f7ef' };
