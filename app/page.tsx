@@ -129,7 +129,7 @@ export default function Home() {
       <header className="topbar">
         <a href="#ilha" className="brand" aria-label="Capivárias, ir para o jogo">
           <Image className="brand-icon" src="/icons/icon-192.png" alt="" width={42} height={42} unoptimized />
-          <span><strong>capivárias</strong><span className="brand-dot">.</span></span>
+          <span><strong>Capivárias</strong><span className="brand-dot">.</span></span>
         </a>
         <div className="topbar-right"><span className="slow-note"><Sun size={17} /> um dia de cada vez</span><PwaControls /><Button variant="ghost" className="help-button" onClick={() => setHelp(true)} aria-label="Como jogar"><CircleHelp size={21} /></Button></div>
       </header>
